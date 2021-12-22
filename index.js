@@ -20,6 +20,7 @@ client.connect(err => {
    const menuCollection = client.db("ehungry").collection("menus");
    const cartOrderCollection = client.db("ehungry").collection("cartOrders");
    const orderCollection = client.db("ehungry").collection("orders");
+   const bookingCollection = client.db("ehungry").collection("bookings");
    const userCollection = client.db("ehungry").collection("users");
    
    // add a single menu by admin
@@ -61,34 +62,42 @@ client.connect(err => {
       const result = await cartOrderCollection.deleteOne(query);
       res.send(result)
    })
+   // delete all cart order
+   app.delete('/deleteAllCartOrder/:id', async(req, res) => {
+      const query = {email: req.params.id}
+      const result = await cartOrderCollection.deleteMany(query);
+      res.send(result)
+   })
 
 
-   // add to cart
+
+
+   // add order
    app.post('/addOrder', async(req, res) => {
       const result = await orderCollection.insertOne(req.body);
       res.send(result)
    })
 
-   // load all cart order
+   // load all orders
    app.get('/orders', async(req, res) => {
       const result = await orderCollection.find({}).toArray()
       res.send(result)
    })
 
-   // load a specific cart order
+   // load a specific order
    app.get('/orders/:email', async(req, res) => {
       const result = await orderCollection.find({email: req.params.email}).toArray()
       res.send(result)
    })
 
-   // delete cart order
+   // delete order
    app.delete('/deleteOrder/:id', async(req, res) => {
       const query = {_id: ObjectId(req.params.id)}
       const result = await orderCollection.deleteOne(query);
       res.send(result)
    })
 
-   // update bookings status
+   // update order status
    app.put('/orders/:id', async (req, res) => {
       const filter = {_id: ObjectId(req.params.id) }
       const options = { upsert: true };
@@ -101,10 +110,70 @@ client.connect(err => {
       res.send(result)
    })
 
+   
+
+
+   // add to cart
+   app.post('/addBooking', async(req, res) => {
+      const result = await bookingCollection.insertOne(req.body);
+      res.send(result)
+   })
+
+   // load all cart order
+   app.get('/bookings', async(req, res) => {
+      const result = await bookingCollection.find({}).toArray()
+      res.send(result)
+   })
+
+   // load a specific cart order
+   app.get('/bookings/:email', async(req, res) => {
+      const result = await bookingCollection.find({email: req.params.email}).toArray()
+      res.send(result)
+   })
+
+   // delete cart order
+   app.delete('/deleteBooking/:id', async(req, res) => {
+      const query = {_id: ObjectId(req.params.id)}
+      const result = await bookingCollection.deleteOne(query);
+      res.send(result)
+   })
+
+   // update bookings status
+   app.put('/bookings/:id', async (req, res) => {
+      const filter = {_id: ObjectId(req.params.id) }
+      const options = { upsert: true };
+      const updateDoc = {
+         $set: {
+            status: "Approved"
+         },
+      };
+      const result = await bookingCollection.updateOne(filter, updateDoc, options);
+      res.send(result)
+   })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
    // add user data
    app.post('/addUser', async(req, res) => {
       const result = await userCollection.insertOne(req.body);
+      res.send(result)
+   })
+   app.get('/users', async(req, res) => {
+      const result = await userCollection.find({}).toArray()
       res.send(result)
    })
 
@@ -139,6 +208,12 @@ client.connect(err => {
          isAdmin = true;
       }
       res.send({admin: isAdmin});
+   })
+
+   app.delete('/deleteUser/:id', async(req, res) => {
+      const query = {_id: ObjectId(req.params.id)}
+      const result = await bookingCollection.deleteOne(query);
+      res.send(result)
    })
 
    
